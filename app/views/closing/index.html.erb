@@ -1,0 +1,6 @@
+<h2>Test</h2>
+<%= form_tag({:action => 'change', :project_id => @project.identifier}, :method => :post) do %>
+<%= l(:enwony_closing_issue) %> <%= text_field_tag :payout_issue, '', :size => 10, :required => true %>
+<%= l(:enwony_sum) %> <%= text_field_tag :sum, '', :size => 10, :required => true %>
+<%= submit_tag l(:button_apply) %>
+<% end %>

@@ -1,0 +1,12 @@
+# English strings go here for Rails i18n
+ru:
+  enwony_sum: "Сумма оплаты"
+  enwony_closing_issue: "Задача для разноски платежа"
+  enwony_menu_closing: "Закрытие по сумме"
+  error_missing_issue: "Не могу найти задачу с номером %{issue_id}"
+  error_missing_project: "Не могу найти проект с идентификатором %{project_id}"
+  error_zero_sum: "Задана нулевая сумма для разноски"
+  issue_payed_and_closed_by: "Оплачено по #%{issue_id} = %{sum} и закрыто"
+  money_total: "Всего %{sum}"
+  money_left: "Осталось: %{sum}"
+  data_updated: "Данные в задаче %{issue_id} обновлены успешно"
