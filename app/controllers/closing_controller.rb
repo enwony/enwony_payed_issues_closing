@@ -5,63 +5,55 @@ class ClosingController < ApplicationController
   before_filter :authorize
   menu_item :payed_closing
 
-  # show form to fill - project, payout issue N, sum
-  def index
-  end
-
-  # apply changes
-  # TODO check rights before (see application_controller.find_issue)
   def change
-    # TODO issue.save may return false + issue.errors.full_messages
     # TODO to settings
     custom_field_id_sum = 5
-    ready_to_pay_status_id = 7
-    closed_status = IssueStatus.find(5)
+    custom_field_id_payed = 6
+    custom_field_id_counted = 7
+    status_id_closed = 5
 
-    # parameters
-    payout_issue = Issue.find(params[:payout_issue])
-    sum = params[:sum].to_i
+    closed_status = IssueStatus.find(status_id_closed)
+    custom_field_counted = IssueCustomField.find(custom_field_id_counted)
 
-    description = ""
-    total_sum = 0
+    # TODO payto issue must belong to same project as others
+    # TODO check rights before (see application_controller.find_issue)
+    issues = Issue.where(id: params[:ids]).order("created_on DESC")
+    projects = Issue.where(id: params[:ids]).group(:project_id).count
+    raise "all issues must belong to one project" if projects.size() != 1
 
-    # loop issues to handle
-    issues = Issue.where(['project_id = ? and status_id = ?', @project.id, ready_to_pay_status_id]).order("created_on DESC")
+    # TODO check if payto issue have payed < counted
+    payout_issue = Issue.find(params[:payto])
+    payed = payout_issue.custom_field_value(custom_field_id_payed).to_i
+    counted = payout_issue.custom_field_value(custom_field_id_counted).to_i
+
     issues.each  do |issue|
        issue_sum = issue.custom_field_value(custom_field_id_sum).to_i
 
-       # if we count next
-       if sum - issue_sum >= 0
+       # if we should count next
+       if counted + issue_sum <= payed
          issue.init_journal(User.current)
          issue.notes = t(:issue_payed_and_closed_by, :issue_id => payout_issue.id, :sum => issue_sum)
          issue.status = closed_status
          issue.save
 
          description += "##{issue.id} = #{issue_sum} \n"
-         sum -= issue_sum
+         counted += issue_sum
          total_sum += issue_sum
        end
     end
 
-    description += t(:money_total, :sum => total_sum)
-    if sum > 0
-      description += t(:money_left, :sum => sum)
-    end
+    description += t(:money_total, :sum => total_sum) + "\n"
 
+    # TODO issue.save may return false + issue.errors.full_messages
     payout_issue.init_journal(User.current)
     payout_issue.description += description
+    payout_issue.custom_field_values = {custom_field_counted => counted}
     payout_issue.save
 
     flash[:notice] = t(:data_updated, :issue_id => payout_issue.id)
-    redirect_to :action => 'index', :project_id => @project.id
+    redirect_to :controller => 'issues', action => 'index', :project_id => project_id
   rescue ActiveRecord::RecordNotFound
     render_404
-  end
-
-  private
-
-  def find_project
-    @project = Project.find(params[:project_id])
   end
 
 end
