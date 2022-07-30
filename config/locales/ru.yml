@@ -3,3 +3,5 @@ ru:
   money_total: "Всего %{sum}"
   do_close: "Учесть в задаче"
   error_different_projects: "Невозможно закрыть задачи - выбрано несколько проектов"
+  no_issues_found: "Нет задач к разноске"
+  data_updated: "Данные обновлены"

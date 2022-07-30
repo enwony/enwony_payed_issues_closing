@@ -5,6 +5,5 @@ Redmine::Plugin.register :enwony_payed_issues_closing do
   version '0.0.1'
   url 'http://example.com/path/to/plugin'
   author_url 'http://example.com/about'
-  permission :payed_closing, { :closing => [:index, :change] }, :public => true
   require_dependency 'payed_issues_listener'
 end
