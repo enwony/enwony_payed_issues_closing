@@ -13,7 +13,7 @@ class ClosingHookListener < Redmine::Hook::ViewListener
           .joins('LEFT JOIN custom_values counted on counted.customized_id = issues.id and counted.custom_field_id = %d' % [custom_id_counted])
           .joins('LEFT JOIN custom_values payed on payed.customized_id = issues.id and payed.custom_field_id = %d' % [custom_id_payed])
           .select('issues.id AS id, issues.subject AS subject,  counted.value AS counted, payed.value AS payed')
-          .where(["project_id = ? and status_id <> ? AND IFNULL(payed.value, 0) < IFNULL(counted.value, 0)", project_id, status_id_closed])
+          .where(["project_id = ? and status_id <> ? AND IFNULL(payed.value, 0) <= IFNULL(counted.value, 0)", project_id, status_id_closed])
           .order("created_on DESC")
       core = {controller: 'closing', action: 'change', ids: context[:issues]}
       title = l(:do_close)
