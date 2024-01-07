@@ -5,5 +5,5 @@ Redmine::Plugin.register :enwony_payed_issues_closing do
   version '0.0.1'
   url 'http://example.com/path/to/plugin'
   author_url 'http://example.com/about'
-  require_dependency 'payed_issues_listener'
+  require_dependency File.expand_path('../lib/closing_hook_listener', __FILE__)
 end
